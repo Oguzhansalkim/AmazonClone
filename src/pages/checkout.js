@@ -3,12 +3,10 @@ import { useSelector } from "react-redux";
 import Header from "../components/Header";
 import { selectItems, selectTotal } from "../slices/basketSlice";
 import CheckoutProduct from "../components/CheckoutProduct";
-import {useSession } from "next-auth/client";
+import { useSession } from "next-auth/client";
 import Currency from "react-currency-formatter";
 import { loadStripe } from "@stripe/stripe-js";
-const stripePromise = loadStripe(process.env.stripe_public_key)
-
-
+const stripePromise = loadStripe(process.env.stripe_public_key);
 
 function Checkout() {
   const items = useSelector(selectItems);
@@ -16,11 +14,10 @@ function Checkout() {
   const total = useSelector(selectTotal);
 
   const createCheckoutSession = async () => {
-      const stripe = await stripePromise;
+    const stripe = await stripePromise;
 
-      //Call the backend for cerate checkout session...
-
-  }
+    //Call the backend for cerate checkout session..dsf
+  };
 
   return (
     <div className="bg-gray-100">
@@ -63,14 +60,13 @@ function Checkout() {
               <h2 className="whitespace-nowrap">
                 Subtotal ({items.length} items ) :{" "}
                 <span className="font-bold">
-                  
                   <Currency quantity={total} Currency="GBP" />
                 </span>{" "}
               </h2>
               <button
-              role="link"
-              onClick={createCheckoutSession}
-              disabled={!session}
+                role="link"
+                onClick={createCheckoutSession}
+                disabled={!session}
                 className={`button mt-2 ${
                   !session &&
                   "from-gray-300 to-gray-500 text-gray-300 cursor-not-allowed"
