@@ -1,21 +1,21 @@
 import { buffer } from "micro";
 import * as admin from "firebase-admin";
 
-//Secure a connection to firebase from the backend
-const serviceAccount = require("../../../permissions.json");
+const serviceAccount = require("../../../permission.json");
+
+//initializing to firebase to store it in direbase database
 const app = !admin.apps.length
   ? admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     })
   : admin.app();
 
-// Establish connection to stripe
+//to make connection with stripe first to recieve webhook event
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const endpointsecret = process.env.STRIPE_SIGNING_SECRET;
 
-const endpointSecret = process.env.STRIPE_SIGNING_SECRET;
-
-const fulfillOrder = async (session) => {
-  // console.log('Fulfilling order', session)
+const storingOrders = async (session) => {
+  console.log("fullFilling order ", session);
 
   return app
     .firestore()
@@ -30,33 +30,39 @@ const fulfillOrder = async (session) => {
       timestamp: admin.firestore.FieldValue.serverTimestamp(),
     })
     .then(() => {
-      console.log(`SUCCES: Order ${session.id} had been added to DB`);
+      console.log(`SUCCESS: ORDER ${session.id} STORED THE DATABASE`);
     });
 };
 
 export default async (req, res) => {
   if (req.method === "POST") {
-    const requestBuffer = await buffer(req);
-    const payload = requestBuffer.toString();
+    const reqbuffer = await buffer(req);
+    const payload = reqbuffer.toString();
     const sig = req.headers["stripe-signature"];
 
     let event;
-    // verify that the event posted came from stripe
+
+    //verifying if the event fired is from stripe
     try {
-      event = stripe.webhooks.constructorEvent(payload, sig, endpointSecret);
+      event = await stripe.webhooks.constructEvent(
+        payload,
+        sig,
+        endpointsecret
+      );
     } catch (err) {
-      consloe.log("ERROR", err.message);
-      return res.status(400).send(`Webhook error: ${err.message}`);
+      console.log("ERROR", err.message);
+      return res.status(400).send(`WebHook error: ${err.message}`);
     }
 
-    // Handle the checkout.session.completed event
+    
+
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
 
-      // Fulfill the order ...
-      return fulfillOrder(session)
+      //storing or fullfilling orders in database
+      return storingOrders(session)
         .then(() => res.status(200))
-        .catch((err) => res.status(400).send(`Webhook Error:${err.message}`));
+        .catch((err) => res.status(400).send(`WebHook err: ${err.message}`));
     }
   }
 };
@@ -64,6 +70,6 @@ export default async (req, res) => {
 export const config = {
   api: {
     bodyParser: false,
-    externalResorver: true,
+    externalResolver: true,
   },
 };
