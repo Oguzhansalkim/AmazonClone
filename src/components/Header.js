@@ -1,23 +1,24 @@
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { signIn, signOut, useSession } from "next-auth/client";
 import {
   MenuIcon,
   SearchIcon,
   ShoppingCartIcon,
 } from "@heroicons/react/outline";
-import Image from "next/image";
-import { signIn, signOut, signout, useSession } from "next-auth/client";
-import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
 import { selectItems } from "../slices/basketSlice";
+import { useSelector } from "react-redux";
 
 function Header() {
   const [session] = useSession();
   const router = useRouter();
+
   const items = useSelector(selectItems);
+
   return (
     <header>
-      {/* Top nav */}
-      <div className="flex items-center bg-amazon_blue p-1 flex-grow py-2 ">
-        <div className="mt-2 flex items-center flex-grow sm:flex-grow-0">
+      <div className="bg-amazon_blue flex p-1 py-2 items-center flex-grow  ">
+        <div className=" mt-2 flex flex-grow sm:flex-grow-0 items-center">
           <Image
             onClick={() => router.push("/")}
             src="https://links.papareact.com/f90"
@@ -27,42 +28,46 @@ function Header() {
             className="cursor-pointer"
           />
         </div>
-        {/* Search */}
-        <div className="hidden sm:flex itmes:center h-10 rounded-md flex-grow cursor-pointer  bg-yellow-400 hover:bg-yellow-500">
+        <div className=" hidden sm:flex items-center h-10 flex-grow bg-yellow-400 hover:bg-yellow-500 rounded-md  ">
           <input
-            className="p-2 h-full w-6 flex-grow flex-shrink rounded-l-md focus:outline-none px-4"
             type="text"
+            className=" p-2 h-full flex-shrink flex-grow rounded-l-md focus:outline-none px-2"
           />
           <SearchIcon className="h-12 p-4" />
         </div>
-        {/* Right */}
-        <div className="text-white flex items-center text-xs space-x-6 whitespace-nowrap ">
+
+        <div className="flex items-center text-white text-xs space-x-6 ml-2">
           <div onClick={!session ? signIn : signOut} className="link">
-            <p> {session ? `Hello, ${session.user.name}` : "Sign In"} </p>
-            <p className="font-extrabold md=text-sm">Account & Lists</p>
+            <p>{session ? `hello, ${session.user.name}` : "Sign In"}</p>
+            <p className="font-extrabold md:text-sm whitespace-nowrap">
+              Account & Lists
+            </p>
           </div>
-          <div
-            onClick={() => router.push("/orders")}
-            className=" cursor-pointer link"
-          >
+
+          <div onClick={() => router.push("/orders")} className="link">
             <p>Returns</p>
-            <p className="font-extrabold md=text-sm">& Orders</p>
+            <p className="font-extrabold md:text-sm whitespace-nowrap">
+              &orders
+            </p>
           </div>
-          <div
-            onClick={() => router.push("/checkout")}
-            className="relative link flex items-center"
-          >
-            <span className="absolute top-0 right-0 md:rigth-10 h-4 w-4 bg-yellow-400 text-center rounded-full text-black font-bold">
+
+          <div className="link relative flex items-center">
+            <span className="absolute top-0 right-0 h-4 text-center rounded-full text-black font-bold w-4 bg-yellow-400 md:right-11">
               {items.length}
             </span>
-            <ShoppingCartIcon className="h-10" />
-            <p className="hidden md:inline font-extrabold md=text-sm">Basket</p>
+            <ShoppingCartIcon
+              onClick={() => router.push("/checkout")}
+              className="h-10"
+            />
+            <p className="font-extrabold hidden md:text-sm md:inline whitespace-nowrap">
+              Basket
+            </p>
           </div>
         </div>
       </div>
-      {/* Bottom nav */}
-      <div className="flex items-center bg-amazon_blue-light space-x-3 p-2 pl-6 text-white text-small">
-        <p className="link flex items-center">
+
+      <div className="flex items-center space-x-3 bg-amazon_blue-light text-sm text-white">
+        <p className="flex link items-center">
           <MenuIcon className="h-6 mr-1" />
           All
         </p>
@@ -72,8 +77,8 @@ function Header() {
         <p className="link hidden lg:inline-flex">Electronics</p>
         <p className="link hidden lg:inline-flex">Food & Grocery</p>
         <p className="link hidden lg:inline-flex">Prime</p>
-        <p className="link hidden lg:inline-flex">Buy Again</p>
-        <p className="link hidden lg:inline-flex">Shopper Toolkit</p>
+        <p className="link hidden lg:inline-flex">Buy again</p>
+        <p className="link hidden lg:inline-flex">Shopper ToolKit</p>
         <p className="link hidden lg:inline-flex">Health & Personal Care</p>
       </div>
     </header>
