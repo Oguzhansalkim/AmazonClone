@@ -1,9 +1,8 @@
+import { getSession } from "next-auth/client";
 import Head from "next/head";
 import Banner from "../components/Banner";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import ProductFeed from "../components/ProductFeed";
 import Header from "../components/Header";
-import { getSession } from "next-auth/client";
+import Productfeed from "../components/Productfeed";
 
 export default function Home({ products }) {
   return (
@@ -14,10 +13,10 @@ export default function Home({ products }) {
 
       <Header />
 
-      <main className="max-w-screen-2xl mx-auto">
+      <main className="max-w-screen-lg mx-auto">
         <Banner />
 
-        <ProductFeed products={products} />
+        <Productfeed products={products} />
       </main>
     </div>
   );
@@ -31,7 +30,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      products,
+      products: products,
       session,
     },
   };
